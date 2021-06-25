@@ -5,6 +5,10 @@
       {
         "source": "/api/v1/vaccine/**",
         "function": "api"
+      },
+      {
+        "source": "/api/v1/article/**",
+        "function": "rssApi"
       }
     ],
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
