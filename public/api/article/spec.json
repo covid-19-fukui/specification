@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "記事取得API",
+    "description": "福井新聞の記事情報を提供",
+    "version": "1.0.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    { "url": "https://dev.fooqoo56.com/", "description": "本番環境" }
+  ],
+  "components": {
+    "schemas": {
+      "InfoResponse": {
+        "type": "object",
+        "properties": {
+          "datetime": {
+            "type": "string",
+            "example": "2021-06-11T21:18:36+09:00",
+            "description": "リクエスト日時"
+          }
+        },
+        "required": ["datetime"]
+      },
+      "ArticleResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "example": "神奈川県で2人死亡、201人コロナ感染　6月23日発表",
+            "description": "記事タイトル"
+          },
+          "link": {
+            "type": "string",
+            "example": "https://www.fukuishimbun.co.jp/articles/-/1343487",
+            "description": "記事へのリンク"
+          },
+          "publishedAt": {
+            "type": "number",
+            "example": 1624440300,
+            "description": "記事の掲載日時"
+          }
+        },
+        "required": ["title", "link", "publishedAt"]
+      },
+      "ArticleListApiResponse": {
+        "type": "object",
+        "properties": {
+          "info": {
+            "description": "リクエスト情報",
+            "allOf": [{ "$ref": "#/components/schemas/InfoResponse" }]
+          },
+          "articles": {
+            "description": "記事",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ArticleResponse" }
+          }
+        },
+        "required": ["info", "articles"]
+      },
+      "ArticleErrorResponse": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "エラーのタイトル",
+            "example": "エラーのタイトル"
+          },
+          "detail": {
+            "type": "string",
+            "description": "エラー詳細",
+            "example": "エラー詳細"
+          }
+        },
+        "required": ["title", "detail"]
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/article/search": {
+      "get": {
+        "operationId": "ArticleController_getVaccines",
+        "parameters": [
+          {
+            "name": "count",
+            "required": false,
+            "in": "query",
+            "example": 20,
+            "description": "取得記事数 (1~20)",
+            "schema": { "default": 20, "type": "number" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "記事の取得が成功した場合、レスポンスとして返す",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleListApiResponse"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "get以外のHTTPメソッドでアクセスされた場合、エラーレスポンスとして返す",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "記事の取得が失敗した場合、エラーレスポンスとして返す",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ArticleErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["api/v1/article"]
+      }
+    }
+  }
+}
